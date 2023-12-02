@@ -44,9 +44,49 @@ def get_omdbapi_movie_data(movie_list):
     return all_movies_useful_info
 
 
+def get_celebrityapi_actors_data(actors_list):
+
+    apikey = apicredentials.celebrity_apikey
+    #base_url = 'https://api.api-ninjas.com/v1/celebrity?name'
+
+    actors_useful_information = []
+    actors_not_found = []
+
+    #Get the actors data from the API
+    for actor in actors_list:
+        url = 'https://api.api-ninjas.com/v1/celebrity?name={}'.format(actor)
+        response = requests.get(url, headers={'X-Api-Key': apikey})
+        actor_data = response.json()
+        
+
+        #Make sure the actor information was found
+        try:
+            actor_info = actor_data[0]
+            #extract the useful data
+            net_worth = actor_info["net_worth"]
+            gender = actor_info["gender"]
+            birthday = actor_info["birthday"]
+            age = actor_info["age"]
+            is_alive = actor_info["is_alive"]
+
+
+            #create a tuple with all actor's useful details
+            actor_details = (actor, age, gender, birthday, net_worth, is_alive)
+
+
+        #Keep track of the actors that were not found in the API
+        except:
+            actors_not_found.append(actor)   
+
+        #Add all actors tuples to a list
+        actors_useful_information.append(actor_details)
+        
+    return actors_useful_information
+
 
 
 
 
 
 #get_omdbapi_movie_data(["The Godfather", 'Mean Girls'])
+#get_celebrityapi_actors_data(["Lindsay Lohan", "Leonardo Dicaprio", "Jennifer Lawrence"])
