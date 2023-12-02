@@ -33,12 +33,13 @@ def get_omdbapi_movie_data(movie_list):
 
             #create a tuple with the movie's useful information
             movie_details = (movie, int(year), int(rotten_rating), metascore_rating, imdb_rating, actors_list)
+            
+            all_movies_useful_info.append(movie_details)
 
         except:
             #insert movie name into the list of movie with no information found on the API
             movies_with_no_info_found.append(movie)
 
-        all_movies_useful_info.append(movie_details)
             
     return all_movies_useful_info
 
