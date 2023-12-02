@@ -28,19 +28,18 @@ def add_omdbapi_data_to_database(movie_data, cur, conn):
     cur.execute("SELECT COUNT(*) FROM Movies")
     start_index = (cur.fetchone())[0]
     
-    #Check if we already iterated through the entire list of movies_data
-    if start_index >= len(movie_data):
 
-        print("We collected all movies already!")
-        #Exit the program
-        exit()
-    
-    
-    else:
+    #Loop 3 times to gather 3 new movies information since it will add a total of 21 new items in the database
+    for x in range(start_index, start_index + 3):
 
-        #Loop 3 times to gather 3 new movies information since it will add a total of 21 new items in the database
-        for x in range(start_index, start_index + 3):
+        #Check if we already iterated through the entire list of movies_data
+        if start_index >= len(movie_data):
 
+            print("We collected all movies already!")
+            #Exit the program
+            break
+         
+        else:
             #insert movie information into the Movies table in the database
             movie_info = movie_data[x]
             title, year, rotten_tomatoes, metascore, imdb, actors = movie_info
@@ -49,7 +48,7 @@ def add_omdbapi_data_to_database(movie_data, cur, conn):
             #get movie_id from Movies table
             cur.execute("SELECT movie_id FROM Movies WHERE title = (?)", (title,))
             movie_id = (cur.fetchone())[0]
-            
+                
             #insert each actor to the actors table
             for actor in actors:
                 cur.execute("INSERT OR IGNORE INTO Actors (name) VALUES (?)", (actor,))
@@ -60,12 +59,18 @@ def add_omdbapi_data_to_database(movie_data, cur, conn):
 
                 #insert data into the Movies_and_Actors table
                 cur.execute("INSERT OR IGNORE INTO Movies_and_Actors (movie_id, actor_id) VALUES (?,?)", (movie_id, actor_id))
-        
-        conn.commit()
+            
+            conn.commit()
+
+#Collect the last actor_id from Actors table to litmit new data entry
+def get_last_actors_id(cur):
+    cur.execute("SELECT * FROM Actors WHERE actor_id=(SELECT max(actor_id) FROM Actors)")
+    last_actor_id = (cur.fetchone())[0]
+    return last_actor_id
 
 
-
-#cur, conn = setup_database_structure("Movie & Actors Database")
-#setup_all_tables(cur, conn)
-#movie_data = [("movie 1", 2012, 70, 69, 4.5, ["Actor 1", "Actor 2", "Actor 3"]), ("movie 2", 2022, 89, 75, 8.9, ["Actor 1", "Actor 4", "Actor 5"]), ("movie 3", 2022, 89, 75, 8.9, ["Actor 8", "Actor 9", "Actor 10"])]
-#add_omdbapi_data_to_database(movie_data, cur, conn)
+cur, conn = setup_database_structure("Movie & Actors Database")
+setup_all_tables(cur, conn)
+movie_data = [("movie 1", 2012, 70, 69, 4.5, ["Actor 1", "Actor 2", "Actor 3"]), ("movie 2", 2022, 89, 75, 8.9, ["Actor 1", "Actor 4", "Actor 5"]), ("movie 3", 2022, 89, 75, 8.9, ["Actor 8", "Actor 9", "Actor 10"])]
+add_omdbapi_data_to_database(movie_data, cur, conn)
+get_last_actors_id(cur)
