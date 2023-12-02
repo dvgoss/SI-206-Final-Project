@@ -1,6 +1,5 @@
 import apicredentials
 import requests
-#import os
 
 
 #get movie data from OMDb API for all the movies in a list 
@@ -83,10 +82,3 @@ def get_celebrityapi_actors_data(actors_list):
         
     return actors_useful_information
 
-
-
-
-
-
-#get_omdbapi_movie_data(["The Godfather", 'Mean Girls'])
-#get_celebrityapi_actors_data(["Lindsay Lohan", "Leonardo Dicaprio", "Jennifer Lawrence"])
