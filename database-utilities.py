@@ -1,6 +1,7 @@
 import sqlite3
 import os
 import api_factory
+import get_movies_list
 
 
 def setup_database_structure(database_name):
@@ -117,10 +118,13 @@ def add_celebrityapi_data_to_database(index, cur, conn):
             cur.execute("DELETE FROM Actors WHERE name = (?)", (actor,))
             conn.commit()
 
+# Fill in the database
+def main():
+    cur, conn = setup_database_structure("Movie & Actors Database")
+    setup_all_tables(cur, conn)
+    index = get_last_actors_id(cur)
+    movie_list = get_movies_list.get_movies_list()
+    movie_data = api_factory.get_omdbapi_movie_data(movie_list)
 
-cur, conn = setup_database_structure("Movie & Actors Database")
-setup_all_tables(cur, conn)
-index = get_last_actors_id(cur)
-movie_data = [("movie 1", 2012, 70, 69, 4.5, ["Lindsay Lohan", "Leonardo Dicaprio", "Amber Heard"]), ("movie 2", 2022, 89, 75, 8.9, ["Lindsay Lohan", "Rachael McAdams", "Meryl Streep"]), ("movie 3", 2022, 89, 75, 8.9, ["George Clooney", "Angelina Jolie", "Brad Pitt"])]
-add_omdbapi_data_to_database(movie_data, cur, conn)
-add_celebrityapi_data_to_database(index, cur, conn)
+    add_omdbapi_data_to_database(movie_data, cur, conn)
+    add_celebrityapi_data_to_database(index, cur, conn)
