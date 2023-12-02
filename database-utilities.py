@@ -1,5 +1,6 @@
 import sqlite3
 import os
+import api_factory
 
 
 def setup_database_structure(database_name):
@@ -62,10 +63,20 @@ def add_omdbapi_data_to_database(movie_data, cur, conn):
             
             conn.commit()
 
-#Collect the last actor_id from Actors table to litmit new data entry
+
 def get_last_actors_id(cur):
+
+    #Collect the last actor_id from Actors table to litmit new data entry
     cur.execute("SELECT * FROM Actors WHERE actor_id=(SELECT max(actor_id) FROM Actors)")
-    last_actor_id = (cur.fetchone())[0]
+    last_actor_info = (cur.fetchone())
+
+    if last_actor_info != None:
+        last_actor_id = last_actor_info[0]
+    
+    #If there's no data in the Actors table, set the index to zero
+    else:
+        last_actor_id = 0
+
     return last_actor_id
 
 
