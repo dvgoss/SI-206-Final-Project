@@ -108,15 +108,14 @@ def add_celebrityapi_data_to_database(index, cur, conn):
 
 
         # Update columns in the Actors table for the given actor
-        #cur.execute("UPDATE Actors SET age=?, gender=?, birthday=?, net_worth=?, is_alive=? WHERE name=?",(age, gender, birthday, net_worth, is_alive, name))
-        #conn.commit()
+        cur.execute("UPDATE Actors SET age=?, gender=?, birthday=?, net_worth=?, is_alive=? WHERE name=?",(age, gender, birthday, net_worth, is_alive, name))
+        conn.commit()
 
         for actor in no_info_actors:
 
             # Delete rows of Actors where the API didn't have information on
             cur.execute("DELETE FROM Actors WHERE name = (?)", (actor,))
             conn.commit()
-
 
 
 cur, conn = setup_database_structure("Movie & Actors Database")
