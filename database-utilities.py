@@ -12,69 +12,70 @@ def setup_database_structure(database_name):
 
 def setup_all_tables(cur, conn):
 
-    #create Movies table
+    # Create Movies table
     cur.execute("CREATE TABLE IF NOT EXISTS Movies (movie_id INTEGER PRIMARY KEY, title TEXT UNIQUE, year INTEGER, rotten_tomatoes FLOAT, metascore FLOAT, imdb FLOAT)")
     
-    #create Actors table
+    # Create Actors table
     cur.execute("CREATE TABLE IF NOT EXISTS Actors (actor_id INTEGER PRIMARY KEY, name TEXT UNIQUE, age INTEGER, gender TEXT, birthday TEXT, net_worth NUMERIC, is_alive INTEGER)")
     
-    #create Movies_Actors table
+    # Create Movies_Actors table
     cur.execute("CREATE TABLE IF NOT EXISTS Movies_and_Actors (movie_actor_combination_id INTEGER PRIMARY KEY, movie_id INTEGER, actor_id INTEGER)")
 
     conn.commit()
 
-
+# Expects a movie_data is a list with no duplicates, and that movie_data remains the same across multiple runs
 def add_omdbapi_data_to_database(movie_data, cur, conn):
 
-    #Check length of Movies table to gather new Movies from the given list
+    # Check length of Movies table to gather new Movies from the given list
     cur.execute("SELECT COUNT(*) FROM Movies")
     start_index = (cur.fetchone())[0]
-    
+    end_index = start_index + 3
 
-    #Loop 3 times to gather 3 new movies information since it will add a total of 21 new items in the database
-    for x in range(start_index, start_index + 3):
+    # Loop 3 times to gather 3 new movies information since it will add a total of 21 new items in the database
+    for x in range(start_index, end_index):
 
-        #Check if we already iterated through the entire list of movies_data
+        # Check if we already iterated through the entire list of movies_data
         if start_index >= len(movie_data):
 
             print("We collected all movies already!")
-            #Exit the program
+            # Finish the program
             break
          
         else:
-            #insert movie information into the Movies table in the database
+            # Insert movie information into the Movies table in the database
             movie_info = movie_data[x]
             title, year, rotten_tomatoes, metascore, imdb, actors = movie_info
             cur.execute("INSERT OR IGNORE INTO Movies (title, year, rotten_tomatoes, metascore, imdb) VALUES (?,?,?,?,?)", (title, year, rotten_tomatoes, metascore, imdb))
 
-            #get movie_id from Movies table
+            # Get movie_id from Movies table
             cur.execute("SELECT movie_id FROM Movies WHERE title = (?)", (title,))
             movie_id = (cur.fetchone())[0]
                 
-            #insert each actor to the actors table
+            # Insert each actor to the actors table
             for actor in actors:
                 cur.execute("INSERT OR IGNORE INTO Actors (name) VALUES (?)", (actor,))
 
-                #get actor_id from the Actors table
+                # Get actor_id from the Actors table
                 cur.execute("SELECT actor_id FROM Actors WHERE name = (?)", (actor,))
                 actor_id = (cur.fetchone())[0]
 
-                #insert data into the Movies_and_Actors table
+                # Insert data into the Movies_and_Actors table
                 cur.execute("INSERT OR IGNORE INTO Movies_and_Actors (movie_id, actor_id) VALUES (?,?)", (movie_id, actor_id))
             
             conn.commit()
+        conn.commit()
 
 
 def get_last_actors_id(cur):
 
-    #Collect the last actor_id from Actors table to litmit new data entry
+    # Collect the last actor_id from Actors table to litmit new data entry
     cur.execute("SELECT * FROM Actors WHERE actor_id=(SELECT max(actor_id) FROM Actors)")
     last_actor_info = (cur.fetchone())
 
     if last_actor_info != None:
         last_actor_id = last_actor_info[0]
     
-    #If there's no data in the Actors table, set the index to zero
+    # If there's no data in the Actors table, set the index to zero
     else:
         last_actor_id = 0
 
@@ -120,11 +121,25 @@ def add_celebrityapi_data_to_database(index, cur, conn):
 
 # Fill in the database
 def main():
+
+    # Grab the list of movies
+    movie_list = get_movies_list.get_movies_list()
+    # Ensure there are no repeated movies in the given list 
+    movie_list = set(movie_list)
+
+    # Create and set up the Movie & Actors database
     cur, conn = setup_database_structure("Movie & Actors Database")
     setup_all_tables(cur, conn)
+
+    # Keep track of the last actors added
     index = get_last_actors_id(cur)
-    movie_list = get_movies_list.get_movies_list()
+    
+    # Retrieve the Movies information from OMDb API
     movie_data = api_factory.get_omdbapi_movie_data(movie_list)
 
+    # Add data from both APIs into the database
     add_omdbapi_data_to_database(movie_data, cur, conn)
     add_celebrityapi_data_to_database(index, cur, conn)
+
+
+main()
