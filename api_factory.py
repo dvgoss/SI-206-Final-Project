@@ -72,13 +72,13 @@ def get_celebrityapi_actors_data(actors_list):
             #create a tuple with all actor's useful details
             actor_details = (actor, age, gender, birthday, net_worth, is_alive)
 
+            #Add all actors tuples to a list
+            actors_useful_information.append(actor_details)
 
         #Keep track of the actors that were not found in the API
         except:
             actors_not_found.append(actor)   
 
-        #Add all actors tuples to a list
-        actors_useful_information.append(actor_details)
         
-    return actors_useful_information
+    return actors_useful_information, actors_not_found
 
