@@ -24,32 +24,48 @@ def setup_all_tables(cur, conn):
 
 def add_omdbapi_data_to_database(movie_data, cur, conn):
 
-    #insert each movie information into the Movies table in the database
-    for movie in movie_data:
-        title, year, rotten_tomatoes, metascore, imdb, actors = movie
-        cur.execute("INSERT OR IGNORE INTO Movies (title, year, rotten_tomatoes, metascore, imdb) VALUES (?,?,?,?,?)", (title, year, rotten_tomatoes, metascore, imdb))
-
-        #get movie_id from Movies table
-        cur.execute("SELECT movie_id FROM Movies WHERE title = (?)", (title,))
-        movie_id = (cur.fetchone())[0]
-        
-
-        #insert each actor to the actors table
-        for actor in actors:
-           cur.execute("INSERT OR IGNORE INTO Actors (name) VALUES (?)", (actor,))
-
-           #get actor_id from the Actors table
-           cur.execute("SELECT actor_id FROM Actors WHERE name = (?)", (actor,))
-           actor_id = (cur.fetchone())[0]
-
-           #insert data into the Movies_and_Actors table
-           cur.execute("INSERT OR IGNORE INTO Movies_and_Actors (movie_id, actor_id) VALUES (?,?)", (movie_id, actor_id))
+    #Check length of Movies table to gather new Movies from the given list
+    cur.execute("SELECT COUNT(*) FROM Movies")
+    start_index = (cur.fetchone())[0]
     
-    conn.commit()
+    #Check if we already iterated through the entire list of movies_data
+    if start_index >= len(movie_data):
+
+        print("We collected all movies already!")
+        #Exit the program
+        exit()
+    
+    
+    else:
+
+        #Loop 3 times to gather 3 new movies information since it will add a total of 21 new items in the database
+        for x in range(start_index, start_index + 3):
+
+            #insert movie information into the Movies table in the database
+            movie_info = movie_data[x]
+            title, year, rotten_tomatoes, metascore, imdb, actors = movie_info
+            cur.execute("INSERT OR IGNORE INTO Movies (title, year, rotten_tomatoes, metascore, imdb) VALUES (?,?,?,?,?)", (title, year, rotten_tomatoes, metascore, imdb))
+
+            #get movie_id from Movies table
+            cur.execute("SELECT movie_id FROM Movies WHERE title = (?)", (title,))
+            movie_id = (cur.fetchone())[0]
+            
+            #insert each actor to the actors table
+            for actor in actors:
+                cur.execute("INSERT OR IGNORE INTO Actors (name) VALUES (?)", (actor,))
+
+                #get actor_id from the Actors table
+                cur.execute("SELECT actor_id FROM Actors WHERE name = (?)", (actor,))
+                actor_id = (cur.fetchone())[0]
+
+                #insert data into the Movies_and_Actors table
+                cur.execute("INSERT OR IGNORE INTO Movies_and_Actors (movie_id, actor_id) VALUES (?,?)", (movie_id, actor_id))
+        
+        conn.commit()
 
 
 
 #cur, conn = setup_database_structure("Movie & Actors Database")
 #setup_all_tables(cur, conn)
-#movie_data = [("movie 1", 2012, 70, 69, 4.5, ["Actor 1", "Actor 2", "Actor 3"]), ("movie 2", 2022, 89, 75, 8.9, ["Actor 1", "Actor 4", "Actor 5"])]
+#movie_data = [("movie 1", 2012, 70, 69, 4.5, ["Actor 1", "Actor 2", "Actor 3"]), ("movie 2", 2022, 89, 75, 8.9, ["Actor 1", "Actor 4", "Actor 5"]), ("movie 3", 2022, 89, 75, 8.9, ["Actor 8", "Actor 9", "Actor 10"])]
 #add_omdbapi_data_to_database(movie_data, cur, conn)
