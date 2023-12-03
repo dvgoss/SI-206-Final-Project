@@ -123,7 +123,7 @@ def load_database():
     movie_list = sorted(list(set(movie_list)))
 
     # Create and set up the Movie & Actors database
-    cur, conn = setup_database_structure("Movie_And_Actors_Database")
+    cur, conn = setup_database_connection("Movie_And_Actors_Database")
     setup_all_tables(cur, conn)
 
     # Keep track of the last actor_id with api data added to it
