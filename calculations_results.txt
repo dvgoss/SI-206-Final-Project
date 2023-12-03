@@ -1,0 +1,24 @@
+
+Average Net Worth of Actors Based on Gender
+
+Average Net Worth of Female Actors Who are Still Alive: 38177215
+Average Net Worth of Male Actors Who are Still Alive: 69688648
+
+-----------------------------------------------------------------------
+Popularity of Female-Led Movies Before and After 2000
+
+Average IMDb rating BEFORE 2000: 8.2
+Average IMDb rating ON and AFTER 2000: 8.3
+
+-----------------------------------------------------------------------
+Popularity of Male-Led Movies Before and After 2000
+
+Average IMDb rating BEFORE 2000: 8.4
+Average IMDb rating ON and AFTER 2000: 8.3
+
+-----------------------------------------------------------------------
+Actors Age Trend Over Nearly 100 Years
+
+Slope: 0.0733
+
+-----------------------------------------------------------------------
