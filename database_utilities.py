@@ -4,7 +4,7 @@ import api_factory
 import get_movies_list
 
 
-def setup_database_structure(database_name):
+def setup_database_connection(database_name):
     path = os.path.dirname(os.path.abspath(__file__))
     conn = sqlite3.connect(path + "/" + database_name)
     cur = conn.cursor()
