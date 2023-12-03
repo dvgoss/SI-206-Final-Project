@@ -1,5 +1,7 @@
 import database_utilities
 import os
+import numpy
+import config
 
 
 # Access the existing database
@@ -24,35 +26,6 @@ def write_txt_file(filename, section_header: str, lines: list):
         # Visually separate the different sections
         out_file.write("\n")
         out_file.write("-----------------------------------------------------------------------")
-
-
-
-# Calculate the average rating for each movie in the database
-def calculate_movie_rating_average(cur):
-
-    # Retrieve every movie in the database along with all the ratings
-    cur.execute("SELECT title, rotten_tomatoes, metascore, imdb FROM Movies")
-    all_movies_rows = cur.fetchall()
-
-    all_movies_average_ratings = []
-
-    # Loop through all rows of the database to calculate the average rating for each movie.
-    for row in all_movies_rows:
-        # Extract the information from the row (tuple)
-        title, rotten_tomatoes, metascore, imdb = row
-        # Calculate the rating average, convert the imdb rating to the same type as the other ratings
-        average_rating = (rotten_tomatoes + metascore + (imdb * 10)) / 3
-        # Round the result so it only has 1 decimal place
-        average_rating = round(average_rating, 1)
-
-        # Create a string with movie title and average rating
-        movie_and_average_rating = f"{title}, {average_rating}"
-
-        all_movies_average_ratings.append(movie_and_average_rating)
-
-    write_txt_file("calculations_results.txt", "Average Rating of Movies in The Database", all_movies_average_ratings)
-
-    return all_movies_average_ratings
 
 
 # Calculate the average net worth of actors in the database based on gender
@@ -157,13 +130,56 @@ def calculate_average_imdb_rating_based_on_gender_year(cur, gender: str, year: i
     
 
 
+def calculate_slope_of_age_trend_over_years(cur):
 
-cur, conn = access_database()
-calculate_movie_rating_average(cur)
-calculate_average_networth_based_on_gender(cur)
-calculate_average_imdb_rating_based_on_gender_year(cur, 'female', 2000)
-calculate_average_imdb_rating_based_on_gender_year(cur, 'male', 2000)
+    # Gather all movies years and the valid actors birthdays
+    cur.execute("""SELECT year, birthday FROM Movies 
+                JOIN Movies_and_Actors ON Movies.movie_id = Movies_And_Actors.movie_id
+                JOIN Actors ON Movies_And_Actors.actor_id = Actors.actor_id
+                WHERE birthday IS NOT NULL
+                """)
+    list_of_data_points = cur.fetchall()
+
+    x_values = []
+    y_values = []
+    
+
+    for point in list_of_data_points:
+        # Extract data from the tuple
+        movie_year, birthday = point
+
+        # Select actor's birth year and convert to an integer
+        birth_year = int(birthday.split("-")[0])
+        
+        # Calculate the age of the actor when the movie was released
+        actor_age = movie_year - birth_year
+
+        # If the actor is not a child actor, consider that data point
+        if actor_age > 17:
+            y_values.append(actor_age)
+            x_values.append(movie_year)
+
+    # Check if there is a trend over the years by calculting the slope   
+    slope, y_intercept = numpy.polyfit(x_values, y_values, 1)
+    slope = round(slope, 4)
+
+    # Write information to the calculation file
+    information = [f"Slope: {slope}"]
+    write_txt_file("calculations_results.txt", "Actors Age Trend Over Nearly 100 Years", information)
+
+    # Return data to build scatterplot and best-fit line
+    return (x_values, y_values), slope, y_intercept
+    
+
+def main():
+    # Run calculations 
+    cur, conn = access_database()
+    calculate_average_networth_based_on_gender(cur)
+    calculate_average_imdb_rating_based_on_gender_year(cur, 'female', 2000)
+    calculate_average_imdb_rating_based_on_gender_year(cur, 'male', 2000)
+    calculate_slope_of_age_trend_over_years(cur)
 
 
+main()
 
 
