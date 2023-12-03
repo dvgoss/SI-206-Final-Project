@@ -88,7 +88,7 @@ def calculate_average_networth_based_on_gender(cur):
     average_networth_males = int(total_net_worth_males / len(all_male_actors))
 
 
-    #Write information to the calculations file
+    # Write information to the calculation file
     females_networth_info = f"Average Net Worth of Female Actors Who are Still Alive: {average_networth_females}"
     males_networth_info = f"Average Net Worth of Male Actors Who are Still Alive: {average_networth_males}"
     information = [females_networth_info, males_networth_info]
@@ -98,12 +98,72 @@ def calculate_average_networth_based_on_gender(cur):
     
     
 
+# Calculate the average IMDb rating for movies with more actors of a given gender and split by a given year
+def calculate_average_imdb_rating_based_on_gender_year(cur, gender: str, year: int):
+
+    # Join all three tables to gather the IMDb ratings for the movies released ON or AFTER a given year 
+    # where there are more actors of a given gender 
+    cur.execute("""SELECT imdb FROM Movies 
+                JOIN Movies_and_Actors ON Movies.movie_id = Movies_and_Actors.movie_id 
+                JOIN Actors ON Movies_and_Actors.actor_id = Actors.actor_id 
+                WHERE Actors.gender =(?) AND Movies.year >= (?)
+                GROUP BY Movies.movie_id HAVING COUNT(DISTINCT Actors.actor_id) >= (?)""", (gender, year, 2))
+    
+    all_ratings_on_and_after_year = cur.fetchall()
+
+    # Calculate the average IMDb rating of the movies follow the given criteria
+    all_imdb_ratings = 0
+
+    for movie in all_ratings_on_and_after_year:
+        movie_rating = movie[0]
+
+        # Combine all the IMDb rating values
+        all_imdb_ratings += movie_rating
+    average_imdb_rating_on_and_after_year = all_imdb_ratings / len(all_ratings_on_and_after_year)
+    # Round the average calculation result to have only 1 decimal
+    average_imdb_rating_on_and_after_year = round(average_imdb_rating_on_and_after_year, 1)
+
+    
+    # Join all three tables to gather the IMDb ratings for the movies released BEFORE a given year 
+    # where there are more actors of a given gender 
+    cur.execute("""SELECT imdb FROM Movies 
+                JOIN Movies_and_Actors ON Movies.movie_id = Movies_and_Actors.movie_id 
+                JOIN Actors ON Movies_and_Actors.actor_id = Actors.actor_id 
+                WHERE Actors.gender =(?) AND Movies.year < (?)
+                GROUP BY Movies.movie_id HAVING COUNT(DISTINCT Actors.actor_id) >= (?)""", (gender, year, 2))
+    
+    all_ratings_before_year = cur.fetchall()
+    # Calculate the average IMDb rating of the movies follow the given criteria
+    all_imdb_ratings = 0
+
+    for movie in all_ratings_before_year:
+        movie_rating = movie[0]
+
+        # Combine all the IMDb rating values
+        all_imdb_ratings += movie_rating
+    average_imdb_rating_before_year = all_imdb_ratings / len(all_ratings_before_year)
+    # Round the average calculation result to have only 1 decimal
+    average_imdb_rating_before_year = round(average_imdb_rating_before_year, 1)
+    
+
+    # Write information to the calculation file 
+    before_year_info = f"Average IMDb rating BEFORE {year}: {average_imdb_rating_before_year}"
+    on_after_year_info = f"Average IMDb rating ON and AFTER {year}: {average_imdb_rating_on_and_after_year}"
+    
+    information = [before_year_info, on_after_year_info]
+    write_txt_file("calculations_results.txt", f"Popularity of {gender.capitalize()}-Led Movies Before and After {year}", information)
+
+    return average_imdb_rating_before_year, average_imdb_rating_on_and_after_year
+    
 
 
 
 cur, conn = access_database()
 calculate_movie_rating_average(cur)
 calculate_average_networth_based_on_gender(cur)
+calculate_average_imdb_rating_based_on_gender_year(cur, 'female', 2000)
+calculate_average_imdb_rating_based_on_gender_year(cur, 'male', 2000)
+
 
 
 
