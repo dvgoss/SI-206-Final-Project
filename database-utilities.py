@@ -115,7 +115,7 @@ def add_celebrityapi_data_to_database(index, cur, conn):
 
 
 # Fill in the database
-def main():
+def load_database():
 
     # Grab the list of movies
     movie_list = get_movies_list.get_movies_list()
@@ -137,4 +137,3 @@ def main():
     add_celebrityapi_data_to_database(index, cur, conn)
 
 
-main()
