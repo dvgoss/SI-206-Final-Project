@@ -113,11 +113,6 @@ def add_celebrityapi_data_to_database(index, cur, conn):
         cur.execute("UPDATE Actors SET age=?, gender=?, birthday=?, net_worth=?, is_alive=? WHERE name=?",(age, gender, birthday, net_worth, is_alive, name))
         conn.commit()
 
-        for actor in no_info_actors:
-
-            # Delete rows of Actors where the API didn't have information on
-            cur.execute("DELETE FROM Actors WHERE name = (?)", (actor,))
-            conn.commit()
 
 # Fill in the database
 def main():
@@ -125,13 +120,13 @@ def main():
     # Grab the list of movies
     movie_list = get_movies_list.get_movies_list()
     # Ensure there are no repeated movies in the given list 
-    movie_list = set(movie_list)
+    movie_list = sorted(list(set(movie_list)))
 
     # Create and set up the Movie & Actors database
-    cur, conn = setup_database_structure("Movie & Actors Database")
+    cur, conn = setup_database_structure("Movie_And_Actors_Database")
     setup_all_tables(cur, conn)
 
-    # Keep track of the last actors added
+    # Keep track of the last actor_id with api data added to it
     index = get_last_actors_id(cur)
     
     # Retrieve the Movies information from OMDb API

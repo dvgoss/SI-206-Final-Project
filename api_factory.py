@@ -19,7 +19,7 @@ def get_omdbapi_movie_data(movie_list):
         # Define the movie title in the dictionary to the given movie in the list
         params_dict["t"] = movie
 
-        # Det movie data
+        # Get movie data
         response = requests.get(base_url, params=params_dict)
         movie_data = response.json()
         
