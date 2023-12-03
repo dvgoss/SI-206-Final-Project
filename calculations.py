@@ -11,6 +11,10 @@ def access_database(database_name="Movie_And_Actors_Database"):
 
 # Write a text file
 def write_txt_file(filename, section_header: str, lines: list):
+    # Ensure text file is not rewritten without enabling 
+    if config.WRITE_TO_CALCULATIONS_RESULTS == False:
+        return 
+    
     source_dir = os.path.dirname(__file__)
     full_path = os.path.join(source_dir, filename)
 
@@ -129,7 +133,7 @@ def calculate_average_imdb_rating_based_on_gender_year(cur, gender: str, year: i
     return average_imdb_rating_before_year, average_imdb_rating_on_and_after_year
     
 
-
+# Calculate the slope of the actors age trend over the years
 def calculate_slope_of_age_trend_over_years(cur):
 
     # Gather all movies years and the valid actors birthdays
