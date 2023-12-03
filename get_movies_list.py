@@ -5,14 +5,14 @@ def get_movies_list():
     all_titles = []
 
     #Getting the titles on the first page and adding them to a list
-    base_url = "https://www.listchallenges.com/top-100-movies-to-watch-before-you-die"
+    base_url = "https://www.listchallenges.com/imdb-top-250-movies-of-all-time-2019-update"
     r = requests.get(base_url)
     soup = BeautifulSoup(r.content, 'html.parser')
     titles = soup.find_all("div", class_="item-name")
 
     #Getting the titles on the other pages and appending those to the same list
     page = 2
-    for x in range(2):
+    for x in range(6):
         url = f"{base_url}/list/{page}"
         r = requests.get(url)
         new_soup = BeautifulSoup(r.content, 'html.parser')
