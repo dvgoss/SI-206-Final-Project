@@ -15,8 +15,9 @@ def calculate_average_net_worth_based_on_gender(cur, conn):
     # Create a bar graph
     genders = ['Female', 'Male']
     averages = [avg_net_worth_females, avg_net_worth_males]
+    colors = ['lightcoral', 'darkgreen']
 
-    plt.bar(genders, averages)
+    plt.bar(genders, averages, color=colors)
     plt.xlabel('Gender')
     plt.ylabel('Average Net Worth')
     plt.title('Average Net Worth Based on Gender')
@@ -42,21 +43,25 @@ def calculate_average_imdb_rating_based_on_gender_year(gender, year):
 #[IMPORTANT] What do I mean by female or male-led: If a movie have 2 or 3 female leading actors, then that movie is female-led. The OMDb API stores 3 actors for each movie, and those are the leading actors. 
     avg_rating_before_year, avg_rating_on_after_year = calculations.calculate_average_imdb_rating_based_on_gender_year(cur, gender, year)
 
-    # Create a bar graph
-    scenarios = ['Before ' + str(year), 'On/After ' + str(year)]
-    averages = [avg_rating_before_year, avg_rating_on_after_year]
-
-    plt.bar(scenarios, averages)
+    # Plotting for Before 2000
+    plt.bar(['Before ' + str(year)], [avg_rating_before_year], color='lightcoral')
     plt.xlabel('Scenario')
     plt.ylabel('Average IMDb Rating')
-    plt.title(f'Average IMDb Rating Based on {gender.capitalize()}-Led Movies and Year')
+    plt.title(f'Average IMDb Rating Based on {gender.capitalize()}-Led Movies Before {year}')
     plt.show()
 
-# cur, conn = calculations.access_database()
-calculate_average_imdb_rating_based_on_gender_year('female', 2000, cur, conn)
-calculate_average_imdb_rating_based_on_gender_year('male', 2000, cur, conn)
+    # Plotting for After 2000
+    plt.bar(['On/After ' + str(year)], [avg_rating_on_after_year], color='green')
+    plt.xlabel('Scenario')
+    plt.ylabel('Average IMDb Rating')
+    plt.title(f'Average IMDb Rating Based on {gender.capitalize()}-Led Movies On/After {year}')
+    plt.show()
 
-def calculate_slope_of_age_trend_over_years():
+# Example usage
+calculate_average_imdb_rating_based_on_gender_year('female', 2000)
+calculate_average_imdb_rating_based_on_gender_year('male', 2000)
+
+def calculate_slope_of_age_trend_over_years(cur, conn):
 
 #Create a scatterplot with a best-fit line. The function returns everything you need: a tuple of x-y values (list of x values, list of y values), slope, and y-intercept
 
@@ -64,7 +69,7 @@ def calculate_slope_of_age_trend_over_years():
     (x_values, y_values), slope, y_intercept = calculations.calculate_slope_of_age_trend_over_years(cur)
 
     # Create a scatterplot with best-fit line
-    plt.scatter(x_values, y_values, label='Data Points')
+    plt.scatter(x_values, y_values, label='Data Points', color='orchid')
     plt.plot(x_values, slope * np.array(x_values) + y_intercept, color='red', label='Best-fit Line')
 
     plt.xlabel('Year')
