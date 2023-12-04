@@ -4,14 +4,29 @@ import numpy
 import config
 
 
-# Access the existing database
 def access_database(database_name="Movie_And_Actors_Database"):
+    """ 
+    This function takes a string, the database name, and accesses the database with given name. 
+    The default database name is set to be the name of the database created for this project. 
+    
+    The function returns cur, conn - the cursor and connection for the database
+    """
+
     cur, conn = database_utilities.setup_database_connection(database_name)
     return cur, conn
 
-# Write a text file
 def write_txt_file(filename, section_header: str, lines: list):
-    # Ensure text file is not rewritten without enabling 
+    """
+    This function takes a file name, a string representing the header for the file section, 
+    and a list containing the information to be written, and writes a text file.
+
+    The function does not overwrite the file content if file already exists. Instead, it appends
+    the new content to the end of the file. 
+
+    The function does not return anything.
+    To enable the function, access the config.py file and set WRITE_TO_CALCULATIONS_RESULTS to TRUE. 
+    """
+    # Ensure text file is not re-written without enabling 
     if config.WRITE_TO_CALCULATIONS_RESULTS == False:
         return 
     
@@ -32,8 +47,14 @@ def write_txt_file(filename, section_header: str, lines: list):
         out_file.write("-----------------------------------------------------------------------")
 
 
-# Calculate the average net worth of actors in the database based on gender
 def calculate_average_networth_based_on_gender(cur):
+    """
+    This function takes a database cursor (cur). 
+    It calculates the average net worth of actors in the database based on their gender, females and males, respectively,
+    and writes the results of those calculations to a text file. 
+    
+    The function returns average the net worth of female actors, and the average net worth of male actors, respectively. 
+    """
 
     # Gather the net worth data of all female actors that are still alive
     cur.execute("SELECT net_worth FROM Actors WHERE gender =(?) AND is_alive =(?)", ("female", 1))
@@ -75,8 +96,15 @@ def calculate_average_networth_based_on_gender(cur):
     
     
 
-# Calculate the average IMDb rating for movies with more actors of a given gender and split by a given year
 def calculate_average_imdb_rating_based_on_gender_year(cur, gender: str, year: int):
+    """
+    This function takes a database cursor (cur), a string representing a gender, and an integer representing a year.
+    It calculates the average imdb rating of the movies in the database with more actors of the given gender 
+    BEFORE and ON/AFTER the given year.
+
+    This function returns the average IMDb rating before the given year, and the average rating on/after that given year
+    as float numbers, respectively. 
+    """
 
     # Join all three tables to gather the IMDb ratings for the movies released ON or AFTER a given year 
     # where there are more actors of a given gender 
@@ -133,8 +161,15 @@ def calculate_average_imdb_rating_based_on_gender_year(cur, gender: str, year: i
     return average_imdb_rating_before_year, average_imdb_rating_on_and_after_year
     
 
-# Calculate the slope of the actors age trend over the years
 def calculate_slope_of_age_trend_over_years(cur):
+    """
+    This function takes a database cursor (cur). 
+    It calculates the slope of the actors' age trend over the years. 
+
+    It returns the information necessary to build a scatterplot:
+    a tuple with format (list A, list B) where list A = movie years, and list B = actors' ages;
+    the slope of the best-fit line as a float number with 4 decimal places; and the y-intercept.
+    """
 
     # Gather all movies years and the valid actors birthdays
     cur.execute("""SELECT year, birthday FROM Movies 
