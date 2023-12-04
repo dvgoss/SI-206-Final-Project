@@ -2,8 +2,17 @@ import apicredentials
 import requests
 
 
-# Get movie data from OMDb API for all the movies in a list 
-def get_omdbapi_movie_data(movie_list):
+def get_omdbapi_movie_data(movie_list: list):
+    """
+    This funcion takes a list of movie titles and retrieves information 
+    for all movies in the list from the OMDb API. 
+
+    It returns a list of tuples with the following structure:
+    (movie title, movie year, rotten tomatoes rating, metascore rating, imdb rating, a list with 3 main actors of the movie)
+
+    If the movie is not found in the API or has any of the desired information missing, 
+    it is then added to a list of movies with no information. 
+    """
     
     api_key = apicredentials.omdb_apikey
     base_url = "http://www.omdbapi.com/"
@@ -44,8 +53,16 @@ def get_omdbapi_movie_data(movie_list):
     return all_movies_useful_info
 
 
-# Get actor data from OMDb API for all the actors in a list 
-def get_celebrityapi_actors_data(actors_list):
+
+def get_celebrityapi_actors_data(actors_list: list):
+    """
+    This function takes a list of actors and retrieve information about those actors
+    from the celebrity API. 
+
+    It returns a list of tuples, where each tutple has the following information: 
+    (actor's name, age, gender, birthday, net worth, is it alive? True or False),
+    Also returns a list with the name of all actors that were not found in the API.
+    """
 
     apikey = apicredentials.celebrity_apikey
 
