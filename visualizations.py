@@ -1,6 +1,6 @@
 import calculations
 import numpy as np
-import matplotlib 
+import apicredentials
 import matplotlib.pyplot as plt
 
 cur, conn = calculations.access_database()
@@ -33,14 +33,11 @@ def calculate_average_imdb_rating_based_on_gender_year(gender, year):
 
 #Create a bar graph that puts both gender averages side by side, for both scenarios (before and on/after the 2000s)
 
-
 #Is there a difference in the popularity of female-led or male-led movies released before 2000 in comparison to movies released after that? 
 
 #Are older female-led movies more popular than more recent newer female-led movies?
 
 #Are older male-led movies more popular than more recent newer male-led movies?
-
-
 
 #[IMPORTANT] What do I mean by female or male-led: If a movie have 2 or 3 female leading actors, then that movie is female-led. The OMDb API stores 3 actors for each movie, and those are the leading actors. 
     avg_rating_before_year, avg_rating_on_after_year = calculations.calculate_average_imdb_rating_based_on_gender_year(cur, gender, year)
@@ -60,7 +57,6 @@ calculate_average_imdb_rating_based_on_gender_year('female', 2000, cur, conn)
 calculate_average_imdb_rating_based_on_gender_year('male', 2000, cur, conn)
 
 def calculate_slope_of_age_trend_over_years():
-
 
 #Create a scatterplot with a best-fit line. The function returns everything you need: a tuple of x-y values (list of x values, list of y values), slope, and y-intercept
 
