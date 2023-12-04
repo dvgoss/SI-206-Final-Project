@@ -43,31 +43,22 @@ def calculate_average_imdb_rating_based_on_gender_year(gender, year):
 #[IMPORTANT] What do I mean by female or male-led: If a movie have 2 or 3 female leading actors, then that movie is female-led. The OMDb API stores 3 actors for each movie, and those are the leading actors. 
     avg_rating_before_year, avg_rating_on_after_year = calculations.calculate_average_imdb_rating_based_on_gender_year(cur, gender, year)
 
-    # Print the results for debugging
-    print(f'Average Rating Before {year} - {gender}: {avg_rating_before_year}')
-    print(f'Average Rating On/After {year} - {gender}: {avg_rating_on_after_year}')
+    # Create a bar graph
+    scenarios = ['Before ' + str(year), 'On/After ' + str(year)]
+    averages = [avg_rating_before_year, avg_rating_on_after_year]
 
-    # Plotting for Before 2000
-    if not isinstance(avg_rating_before_year, (int, float)):
-        females_avg_before, males_avg_before = avg_rating_before_year
-        plt.bar(['Female', 'Male'], [females_avg_before, males_avg_before], color=['lightcoral', 'green'])
-        plt.xlabel('Gender')
-        plt.ylabel('Average IMDb Rating')
-        plt.title(f'Average IMDb Rating Based on {gender.capitalize()}-Led Movies Before {year}')
-        plt.show()
-
-    # Plotting for After 2000
-    if not isinstance(avg_rating_on_after_year, (int, float)):
-        females_avg_after, males_avg_after = avg_rating_on_after_year
-        plt.bar(['Female', 'Male'], [females_avg_after, males_avg_after], color=['lightcoral', 'green'])
-        plt.xlabel('Gender')
-        plt.ylabel('Average IMDb Rating')
-        plt.title(f'Average IMDb Rating Based on {gender.capitalize()}-Led Movies On/After {year}')
-        plt.show()
-
+    plt.bar(scenarios, averages)
+    plt.xlabel('Scenario')
+    plt.ylabel('Average IMDb Rating')
+    plt.title(f'Average IMDb Rating Based on {gender.capitalize()}-Led Movies and Year')
+    plt.show()
 
 calculate_average_imdb_rating_based_on_gender_year('female', 2000)
 calculate_average_imdb_rating_based_on_gender_year('male', 2000)
+
+
+# Show both plots
+plt.show()
 
 def calculate_slope_of_age_trend_over_years(cur, conn):
 
