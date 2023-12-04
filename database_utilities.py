@@ -4,7 +4,7 @@ import api_factory
 import get_movies_list
 
 
-def setup_database_connection(database_name):
+def setup_database_connection(database_name: str):
     path = os.path.dirname(os.path.abspath(__file__))
     conn = sqlite3.connect(path + "/" + database_name)
     cur = conn.cursor()
@@ -24,7 +24,7 @@ def setup_all_tables(cur, conn):
     conn.commit()
 
 # Expects a movie_data is a list with no duplicates, and that movie_data remains the same across multiple runs
-def add_omdbapi_data_to_database(movie_data, cur, conn):
+def add_omdbapi_data_to_database(movie_data: list, cur, conn):
 
     # Check length of Movies table to gather new Movies from the given list
     cur.execute("SELECT COUNT(*) FROM Movies")
@@ -82,7 +82,7 @@ def get_last_actors_id(cur):
     return last_actor_id
 
 
-def add_celebrityapi_data_to_database(index, cur, conn):
+def add_celebrityapi_data_to_database(index: int, cur, conn):
 
     # Gather all actors that were added to the database in the current run
     cur.execute("SELECT name FROM Actors WHERE actor_id > (?)", (index,))
