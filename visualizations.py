@@ -1,16 +1,19 @@
 import calculations
 import numpy as np
-import apicredentials
 import matplotlib.pyplot as plt
 
-cur, conn = calculations.access_database()
 
-def calculate_average_net_worth_based_on_gender(cur, conn):
-#This function returns the average net worth of females and males in this order. 
-# Create a bar graph that puts both averages side by side
+
+def plot_average_net_worth_based_on_gender(cur):
+    """
+    This function creates a bar graph with the the average net worth of females and males 
+    showcased side by side.
+    """
+ 
+    # Calculate average net worth of female and male actors
     avg_net_worth_females, avg_net_worth_males = calculations.calculate_average_networth_based_on_gender(cur)
 
-    # Create a bar graph
+    # Create a bar graph that puts both averages side by side
     genders = ['Female', 'Male']
     averages = [avg_net_worth_females, avg_net_worth_males]
     colors = ['indianred', 'cadetblue']
@@ -18,17 +21,18 @@ def calculate_average_net_worth_based_on_gender(cur, conn):
     plt.bar(genders, averages, color=colors)
     plt.xlabel('Gender')
     plt.ylabel('Average Net Worth (in Millions)')
-    plt.title('Average Net Worth Based on Gender')
+    plt.title('Average Net Worth of Actors in the Top 250 Movies Based on Gender')
     plt.show()
 
-calculate_average_net_worth_based_on_gender(cur, conn)
 
 
-def calculate_average_imdb_rating_based_on_gender_year(gender, year):
-#This function returns the average IMDb rating of movies led by the gender before a given year, and on/after that given year in this order. 
-#You will need to pass the gender and year (2000) so the function works 
-#Create a bar graph that puts both gender averages side by side, for both scenarios (before and on/after the 2000s)
 
+def plot_average_imdb_rating_based_on_gender_year(gender, year):
+    """
+    This function plots the average IMDb rating of gender-led movies before and on/after given year
+    """
+
+    # Calculate average IMDb rating for gender-led movies before and on/after year
     avg_rating_before_year, avg_rating_on_after_year = calculations.calculate_average_imdb_rating_based_on_gender_year(cur, gender, year)
     
     # Create a bar graph
@@ -39,20 +43,22 @@ def calculate_average_imdb_rating_based_on_gender_year(gender, year):
     plt.bar(scenarios, averages, color=colors)
     plt.xlabel('Time Period')
     plt.ylabel('Average IMDb Rating')
-    plt.title(f'Average IMDb Rating for {gender.capitalize()}-Led Movies')
+    plt.title(f'Average IMDb Rating for {gender.capitalize()}-Led Movies in the Top 250')
     
     for i, value in enumerate(averages):
         plt.text(i, value, str(round(value, 2)), ha='center', va='bottom')
 
     plt.show()
 
-calculate_average_imdb_rating_based_on_gender_year('female', 2000)
-calculate_average_imdb_rating_based_on_gender_year('male', 2000)
 
 
-def calculate_slope_of_age_trend_over_years(cur, conn):
-#Create a scatterplot with a best-fit line. The function returns everything you need: a tuple of x-y values (list of x values, list of y values), slope, and y-intercept
-#Here we’re checking if the age of the main actors starting movies changed over the years. 
+def plot_scatterplot_of_age_tred(cur):
+    """
+    This function creates a scatterplot with a best-fit line representing
+    a potential actor's age trend over the years
+    """
+
+    # Calculate the data for the scatterplot (points, slope, and y-intercept)
     (x_values, y_values), slope, y_intercept = calculations.calculate_slope_of_age_trend_over_years(cur)
 
     # Create a scatterplot with best-fit line
@@ -61,10 +67,16 @@ def calculate_slope_of_age_trend_over_years(cur, conn):
 
     plt.xlabel('Year')
     plt.ylabel('Age of Main Actors')
-    plt.title('Age Trends Over the Years')
+    plt.title('Age Trend of Actors in the Top 250 Movies Over the Years')
     plt.legend()
     plt.show()
 
-calculate_slope_of_age_trend_over_years(cur, conn)
+
+
+cur, conn = calculations.access_database()
+plot_average_net_worth_based_on_gender(cur)
+plot_average_imdb_rating_based_on_gender_year('female', 2000)
+plot_average_imdb_rating_based_on_gender_year('male', 2000)
+plot_scatterplot_of_age_tred(cur)
 
 
