@@ -27,7 +27,7 @@ def plot_average_net_worth_based_on_gender(cur):
 
 
 
-def plot_average_imdb_rating_based_on_gender_year(gender, year):
+def plot_average_imdb_rating_based_on_gender_year(cur, gender, year):
     """
     This function plots the average IMDb rating of gender-led movies before and on/after given year
     """
@@ -76,8 +76,8 @@ def main():
     # Create visualizations
     cur, conn = calculations.access_database()
     plot_average_net_worth_based_on_gender(cur)
-    plot_average_imdb_rating_based_on_gender_year('female', 2000)
-    plot_average_imdb_rating_based_on_gender_year('male', 2000)
+    plot_average_imdb_rating_based_on_gender_year(cur,'female', 2000)
+    plot_average_imdb_rating_based_on_gender_year(cur, 'male', 2000)
     plot_scatterplot_of_age_tred(cur)
 
 
