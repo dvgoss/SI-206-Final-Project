@@ -72,11 +72,15 @@ def plot_scatterplot_of_age_tred(cur):
     plt.show()
 
 
+def main():
+    # Create visualizations
+    cur, conn = calculations.access_database()
+    plot_average_net_worth_based_on_gender(cur)
+    plot_average_imdb_rating_based_on_gender_year('female', 2000)
+    plot_average_imdb_rating_based_on_gender_year('male', 2000)
+    plot_scatterplot_of_age_tred(cur)
 
-cur, conn = calculations.access_database()
-plot_average_net_worth_based_on_gender(cur)
-plot_average_imdb_rating_based_on_gender_year('female', 2000)
-plot_average_imdb_rating_based_on_gender_year('male', 2000)
-plot_scatterplot_of_age_tred(cur)
+
+main()
 
 
