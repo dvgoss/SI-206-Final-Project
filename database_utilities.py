@@ -115,7 +115,7 @@ def add_celebrityapi_data_to_database(index: int, cur, conn):
 
 
 # Fill in the database
-def load_database():
+def load_database(database_name: str):
 
     # Grab the list of movies
     movie_list = get_movies_list.get_movies_list()
@@ -123,7 +123,7 @@ def load_database():
     movie_list = sorted(list(set(movie_list)))
 
     # Create and set up the Movie & Actors database
-    cur, conn = setup_database_connection("Movie_And_Actors_Database")
+    cur, conn = setup_database_connection(database_name)
     setup_all_tables(cur, conn)
 
     # Keep track of the last actor_id with api data added to it
@@ -137,3 +137,5 @@ def load_database():
     add_celebrityapi_data_to_database(index, cur, conn)
 
 
+database_name = "Movie_And_Actors_Database"
+load_database(database_name)
