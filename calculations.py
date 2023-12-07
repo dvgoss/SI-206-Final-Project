@@ -15,7 +15,7 @@ def access_database(database_name="Movie_And_Actors_Database"):
     cur, conn = database_utilities.setup_database_connection(database_name)
     return cur, conn
 
-def write_txt_file(filename, section_header: str, lines: list):
+def write_txt_file(filename: str, section_header: str, lines: list):
     """
     This function takes a file name, a string representing the header for the file section, 
     and a list containing the information to be written, and writes a text file.
@@ -53,7 +53,7 @@ def calculate_average_networth_based_on_gender(cur):
     It calculates the average net worth of actors in the database based on their gender, females and males, respectively,
     and writes the results of those calculations to a text file. 
     
-    The function returns average the net worth of female actors, and the average net worth of male actors, respectively. 
+    The function returns the average net worth of female actors, and the average net worth of male actors, respectively. 
     """
 
     # Gather the net worth data of all female actors that are still alive
@@ -208,7 +208,58 @@ def calculate_slope_of_age_trend_over_years(cur):
 
     # Return data to build scatterplot and best-fit line
     return (x_values, y_values), slope, y_intercept
+
+
+# This calculation was added after the presentation/grading session so we could add new visualizations   
+def calculate_slope_of_gender_age_trend_over_years(cur, gender: str):
+    """
+    This function takes a database cursor (cur). 
+    It calculates the slope of the given gender actors' age trend over the years. 
+
+    It returns the information necessary to build a scatterplot:
+    a tuple with format (list A, list B) where list A = movie years, and list B = actors' ages;
+    the slope of the best-fit line as a float number with 4 decimal places; and the y-intercept.
+    """
+
+    # Gather all movies years and the valid actors birthdays
+    cur.execute("""SELECT year, birthday FROM Movies 
+                JOIN Movies_and_Actors ON Movies.movie_id = Movies_And_Actors.movie_id
+                JOIN Actors ON Movies_And_Actors.actor_id = Actors.actor_id
+                WHERE gender = (?) AND birthday IS NOT NULL
+                """, (gender,))
+    list_of_data_points = cur.fetchall()
+
+    x_values = []
+    y_values = []
     
+
+    for point in list_of_data_points:
+        # Extract data from the tuple
+        movie_year, birthday = point
+
+        # Select actor's birth year and convert to an integer
+        birth_year = int(birthday.split("-")[0])
+        
+        # Calculate the age of the actor when the movie was released
+        actor_age = movie_year - birth_year
+
+        # If the actor is not a child actor, consider that data point
+        if actor_age > 17:
+            y_values.append(actor_age)
+            x_values.append(movie_year)
+
+    # Check if there is a trend over the years by calculting the slope   
+    slope, y_intercept = numpy.polyfit(x_values, y_values, 1)
+    slope = round(slope, 4)
+
+    # Write information to the calculation file
+    information = [f"Slope: {slope}"]
+    write_txt_file("calculations_results.txt", f"{gender.capitalize()} Actors Age Trend Over Nearly 100 Years", information)
+
+    # Return data to build scatterplot and best-fit line
+    return (x_values, y_values), slope, y_intercept
+    
+
 
 def main():
     # Run calculations 
@@ -217,6 +268,8 @@ def main():
     calculate_average_imdb_rating_based_on_gender_year(cur, 'female', 2000)
     calculate_average_imdb_rating_based_on_gender_year(cur, 'male', 2000)
     calculate_slope_of_age_trend_over_years(cur)
+    calculate_slope_of_gender_age_trend_over_years(cur, 'female')
+    calculate_slope_of_gender_age_trend_over_years(cur, 'male')
 
 
 main()
