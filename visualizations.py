@@ -52,7 +52,7 @@ def plot_average_imdb_rating_based_on_gender_year(cur, gender, year):
 
 
 
-def plot_scatterplot_of_age_tred(cur):
+def plot_scatterplot_of_age_trend(cur):
     """
     This function creates a scatterplot with a best-fit line representing
     a potential actor's age trend over the years
@@ -71,6 +71,27 @@ def plot_scatterplot_of_age_tred(cur):
     plt.legend()
     plt.show()
 
+# This function was added AFTER presentation/grading session to create extra visualizations for more extra points
+def plot_scatterplot_of_gender_age_trend(cur, gender:str):
+    """
+    This function takes a database cursor and a string representing a gender (female or male)
+    The function creates a scatterplot with a best-fit line representing
+    a potential actor's age trend over the years for actors of the given gender
+    """
+
+    # Calculate the data for the scatterplot (points, slope, and y-intercept)
+    points, slope, y_intercept = calculations.calculate_slope_of_gender_age_trend_over_years(cur, gender)
+
+    # Create a scatterplot with best-fit line
+    plt.scatter(points[0], points[1], label='Age', color='mediumaquamarine')
+    plt.plot(points[0], slope * np.array(points[0]) + y_intercept, color='orangered', label='Best-fit Line')
+
+    plt.xlabel('Year')
+    plt.ylabel(f"Age of {gender.capitalize()} Main Actors")
+    plt.title(f'Age Trend of {gender.capitalize()} Actors in the Top 250 Movies Over the Years')
+    plt.legend()
+    plt.show()
+
 
 def main():
     # Create visualizations
@@ -78,7 +99,9 @@ def main():
     plot_average_net_worth_based_on_gender(cur)
     plot_average_imdb_rating_based_on_gender_year(cur,'female', 2000)
     plot_average_imdb_rating_based_on_gender_year(cur, 'male', 2000)
-    plot_scatterplot_of_age_tred(cur)
+    plot_scatterplot_of_age_trend(cur)
+    plot_scatterplot_of_gender_age_trend(cur, 'female')
+    plot_scatterplot_of_gender_age_trend(cur, 'male')
 
 
 main()
