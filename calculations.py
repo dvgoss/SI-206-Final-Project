@@ -213,7 +213,7 @@ def calculate_slope_of_age_trend_over_years(cur):
 # This calculation was added after the presentation/grading session so we could add new visualizations   
 def calculate_slope_of_gender_age_trend_over_years(cur, gender: str):
     """
-    This function takes a database cursor (cur). 
+    This function takes a database cursor and a string representing a gender (female or male). 
     It calculates the slope of the given gender actors' age trend over the years. 
 
     It returns the information necessary to build a scatterplot:
