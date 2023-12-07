@@ -6,8 +6,10 @@ import matplotlib.pyplot as plt
 
 def plot_average_net_worth_based_on_gender(cur):
     """
-    This function creates a bar graph with the the average net worth of females and males 
+    This function takes a database cursor and
+    creates a bar graph with the the average net worth of females and males 
     showcased side by side.
+    It does not return anything.
     """
  
     # Calculate average net worth of female and male actors
@@ -27,9 +29,11 @@ def plot_average_net_worth_based_on_gender(cur):
 
 
 
-def plot_average_imdb_rating_based_on_gender_year(cur, gender, year):
+def plot_average_imdb_rating_based_on_gender_year(cur, gender: str, year: int):
     """
-    This function plots the average IMDb rating of gender-led movies before and on/after given year
+    This function takes a database cursor, a string representing a gender, and an integer representing a year
+    and plots the average IMDb rating of gender-led movies before and on/after given year
+    The function does not return anything.
     """
 
     # Calculate average IMDb rating for gender-led movies before and on/after year
@@ -54,8 +58,9 @@ def plot_average_imdb_rating_based_on_gender_year(cur, gender, year):
 
 def plot_scatterplot_of_age_trend(cur):
     """
-    This function creates a scatterplot with a best-fit line representing
-    a potential actor's age trend over the years
+    This function takes a database cursor and creates a scatterplot with a best-fit line representing
+    a potential actor's age trend over the years.
+    It does not return anything.
     """
 
     # Calculate the data for the scatterplot (points, slope, and y-intercept)
@@ -74,9 +79,9 @@ def plot_scatterplot_of_age_trend(cur):
 # This function was added AFTER presentation/grading session to create extra visualizations for more extra points
 def plot_scatterplot_of_gender_age_trend(cur, gender:str):
     """
-    This function takes a database cursor and a string representing a gender (female or male)
-    The function creates a scatterplot with a best-fit line representing
-    a potential actor's age trend over the years for actors of the given gender
+    This function takes a database cursor and a string representing a gender (female or male),
+    and creates a scatterplot with a best-fit line representing
+    a potential actor's age trend over the years for actors of the given gender.
     """
 
     # Calculate the data for the scatterplot (points, slope, and y-intercept)
